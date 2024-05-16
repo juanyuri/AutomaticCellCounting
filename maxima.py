@@ -11,19 +11,19 @@ def isWithin(x, y, direction, width, height):
     if direction ==0:
         return (y>0)
     elif direction ==1:
-            return (x<xmax and y>0)
+        return (x<xmax and y>0)
     elif direction ==2:
-            return (x<xmax)
+        return (x<xmax)
     elif direction ==3:
-            return (x<xmax and y<ymax)
+        return (x<xmax and y<ymax)
     elif direction ==4:
-            return (y<ymax)
+        return (y<ymax)
     elif direction ==5:
-            return (x>0 and y<ymax)
+        return (x>0 and y<ymax)
     elif direction ==6:
-            return (x>0)
+        return (x>0)
     elif direction ==7:
-            return (x>0 and y>0)
+        return (x>0 and y>0)
 
     return False;  
 
