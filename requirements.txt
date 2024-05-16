@@ -1,0 +1,10 @@
+pyqt5
+opencv-python
+numpy
+matplotlib
+pandas
+kneed
+scikit-learn
+scikit-image
+Cython
+pillow
