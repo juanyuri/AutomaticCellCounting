@@ -2,6 +2,8 @@
 """
 Created on Sat Dec 11 10:05:58 2021
 
+blobdetector.py
+
 @author: Louis
 """
 
@@ -134,4 +136,5 @@ def colorRange(minColor,maxColor):
         keyimg=cv2.drawKeypoints(img2,keypoints,np.array([]),(0,0,255),cv2.DRAW_MATCHES_FLAGS_DRAW_RICH_KEYPOINTS)
         if len(keypoints)>0:
             imgdict[keyimg]=keypoints
+    
     return imgdict

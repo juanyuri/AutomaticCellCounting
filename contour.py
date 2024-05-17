@@ -576,6 +576,9 @@ for i in range(len(colorList)):
     cv2.imshow('thresh'+str(i),threshold)
     thresh=cv2.bitwise_or(thresh, threshold)
 print(first,second)
+
+
+
 #%%
 #determing threshold manually
 while(1):
