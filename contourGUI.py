@@ -5,7 +5,7 @@ Created on Fri Jan  7 17:14:47 2022
 @author: Louis
 """
 
-#%%
+
 import cv2
 import numpy as np
 import matplotlib.pyplot as plt
@@ -16,6 +16,7 @@ from sklearn.preprocessing import MinMaxScaler
 from kneed import KneeLocator
 import math
 # from findmaxima2d.findmaxima2d import find_maxima, find_local_maxima
+from maxima import find_local_maxima
 from scipy.signal import savgol_filter
 from scipy.signal import find_peaks
 from skimage.segmentation import watershed
@@ -471,7 +472,6 @@ def big(NAME):
         if k==113:
             break
         elif k==114:
-            print('whatttt')
             cv2.destroyAllWindows()
             cv2.waitKey(1)
             return big(NAME)
