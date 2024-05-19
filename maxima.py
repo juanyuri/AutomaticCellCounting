@@ -1,6 +1,7 @@
 from PIL import Image
 from scipy import ndimage
 import time
+import numpy as np
 
 
 
@@ -25,7 +26,7 @@ def isWithin(x, y, direction, width, height):
     elif direction ==7:
         return (x>0 and y>0)
 
-    return False;  
+    return False
 
 
 
