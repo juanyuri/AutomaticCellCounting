@@ -491,15 +491,15 @@ def big(NAME):
 
         # This loop iterates through different combinations of block sizes,
         # C values used in the algorithm of Adaptive Thresholding
-
         # Block Size: higher values result in a smoother thresholding. Lower, detailed thresholding.
+        
         for z in range(4,1,-1): # peaks of the histogram: 4,3,2,1
             largest=0
             peakHeight=0
             yhat=0
             peaks=[]
             
-            print('z:',z)
+            print(f'\nStarting iteration for peak count: {z}')
 
             # Block Size in Adaptive Thresholding 
             for i in range(startingValue, endingValue, 4):
@@ -524,10 +524,10 @@ def big(NAME):
                             yhat2=yhat
                             threshlist.append((i,j))
                             image=thresh
-                            print(len(peaks),i,j,area)
+                            print(f'Peak count: {len(peaks)}, Block Size: {i}, C value: {j}, Area: {area}')
                             
                             
-            print('largest: ',largest)
+            print(f'Largest area found: {largest}')
             
 
             if largest<.4*prev:
@@ -537,7 +537,9 @@ def big(NAME):
 
             maxList.append(maxidx)
 
-        print(threshlist)
+        # print(f'Final threshold parameters: {threshlist}')
+        print(f'Returning parameters - Block Size: {first}, C: {second}')
+        cv2.imshow("optimal params", image)
         return first,second,image
          
             
@@ -838,15 +840,12 @@ def big(NAME):
         first,second,threshold=optimalParameters(imgray,colorList[i],minWidth[i])
         thresh=cv2.bitwise_or(thresh, threshold)
     
-    print(first,second)
     cv2.imshow("thresh",thresh)
 
     contours, hierarchy=cv2.findContours(thresh,cv2.RETR_TREE,cv2.CHAIN_APPROX_SIMPLE)
     hierarchy=hierarchy[0,:,3]
     #testing out size of contours
     # areas=[cv2.contourArea(x) for x in contours]
-    
-    
 
 
 
@@ -870,11 +869,18 @@ def big(NAME):
     LAB=cv2.cvtColor(img,cv2.COLOR_BGR2LAB)
     df['Lightness']=df.apply(lambda row: calcColor(row,LAB),axis=1)
     
+    print(df)
+    print(df.describe())
     # Data Cleaning
-    df = df.replace(to_replace='None', value=np.nan).dropna()
+    # df = df.replace(to_replace='None', value=np.nan).dropna()
+    # df = df.applymap(lambda x: np.nan if x == 'None' else x)
+    # df = df.replace('None', np.nan)
+    df = df.dropna()
     df=df.reset_index(drop=True)
-    print(df.isnull().any())
     
+    print("Check if Null Values")
+    print(df.isnull().any())
+    print("Ended Checking Null Values\n")
 
     
 
@@ -891,7 +897,7 @@ def big(NAME):
             if calcDistance(row['Location'],row1['Location'])<distance:
                 distance=calcDistance(row['Location'],row1['Location'])
                 realIndex=index1
-                print(distance,row['Location'],row1['Location'])
+                print(f'Distance: {distance:.2f}, Ground Truth Location: {row["Location"]}, Detected Location: {row1["Location"]}')
         realIndexList.append(realIndex)
     
     groundTruth=df.iloc[realIndexList]
@@ -942,7 +948,10 @@ def big(NAME):
 
     # The DBSCAN is used to group the cells in the 
     # Petri dish into different clusters based on their spatial proximity.
-    dbscan=DBSCAN(eps=distances[kn.knee],min_samples=int(len(df)*.05)).fit(df_dbscan)
+    m_samples = int(len(df)*0.05)
+    min_samples = max(1, m_samples)
+    print(f"Number of min samples for DBSCAN: {m_samples}")
+    dbscan=DBSCAN(eps=distances[kn.knee],min_samples=m_samples).fit(df_dbscan)
     
     # Plot the results of DBSCAN clustering for debugging purposes.
     color=iter([[0,0,255],[0,255,0],[255,0,0],[0,255,255],[0,0,0],[255,255,255],[125,125,0],[0,125,125]])
