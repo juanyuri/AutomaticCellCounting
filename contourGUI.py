@@ -950,8 +950,8 @@ def big(NAME):
     # Petri dish into different clusters based on their spatial proximity.
     m_samples = int(len(df)*0.05)
     min_samples = max(1, m_samples)
-    print(f"Number of min samples for DBSCAN: {m_samples}")
-    dbscan=DBSCAN(eps=distances[kn.knee],min_samples=m_samples).fit(df_dbscan)
+    print(f"Number of min samples for DBSCAN: {min_samples}")
+    dbscan=DBSCAN(eps=distances[kn.knee],min_samples=min_samples).fit(df_dbscan)
     
     # Plot the results of DBSCAN clustering for debugging purposes.
     color=iter([[0,0,255],[0,255,0],[255,0,0],[0,255,255],[0,0,0],[255,255,255],[125,125,0],[0,125,125]])
@@ -992,7 +992,8 @@ def big(NAME):
     
     # Update the cluster column in the dataframe groundTruth based on the cluster assignments
     #set groundTruth to include the DBSCAN cluster
-    groundTruth['cluster']=df_copy[df_copy['Location'].isin(groundTruth['Location'].values)]['cluster']
+    # REMOVED by Recommendation: groundTruth['cluster']=df_copy[df_copy['Location'].isin(groundTruth['Location'].values)]['cluster']
+    groundTruth.loc[:, 'cluster'] = df_copy.loc[df_copy['Location'].isin(groundTruth['Location'].values), 'cluster'].values
     
     # Contains only th erows that belongs to the clusters present in groundTruth
     df_single=df_copy[df_copy['cluster'].isin(groundTruth['cluster'])]
@@ -1061,18 +1062,22 @@ def big(NAME):
 
 
     # Step 10. Final Colony Count and Visualization
-    print('original: ',len(df_copy[df_copy['cluster']==singleIdx]))
-    print('new',len(df_final))
+    # print('original: ',len(df_copy[df_copy['cluster']==singleIdx]))
+    # print('new',len(df_final))
+    
+    print(f'Original colony count (before watershed): {len(df_copy[df_copy["cluster"] == singleIdx])}')
+    print(f'New colonies detected (after watershed): {len(df_final)}')
 
     # Change the background color of the image for better visualization.
     img=changeBackgroundColor(img)
     
-     # Display the total number of colonies on the image.
-    print('Total Colony Count: '+str(totalColonies), (int(midX)-200,int(midY-radius-50)))
+    # Display the total number of colonies on the image.
+    #  (int(midX)-200,int(midY-radius-50))')
+    print(f'Total Colony Count: {totalColonies}.')
     
     # Wait for a key press and then close all OpenCV windows.
     cv2.waitKey(0)
     cv2.destroyAllWindows()
     cv2.waitKey(1)
     
-    return originalImg,clusterSize
+    return originalImg, clusterSize
