@@ -2,9 +2,18 @@
 By: Louis Zhang
 
 **Installation**
+```bash
+pip install -r requirements.txt
+```
+
 
 
 **Tutorial**
+
+_Usage_
+```bash
+python GUI.py
+```
 
 _Analysis_
 Upon opening the image and selecting ‘Start’, an alert instructing the user to select one or more well-defined colony/colonies will appear. Additionally, a separate analysis window will display allowing the user to select their colony/colonies of interest. Upon selection of a colony, the application will attempt to create a contour around the colony of interest so users can verify the validity of their selection. For images containing heterologous colonies, users are prompted to select one colony representing each color. If the user is not satisfied with their selection(s), they can press ‘r’ to restart the selection process. Once the user is satisfied with their selection(s), they are instructed to press ‘q’ to continue the analysis pipeline. 

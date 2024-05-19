@@ -24,9 +24,9 @@ from skimage.segmentation import watershed
 from sklearn.naive_bayes import GaussianNB
 
 
-
 def big(NAME):
 
+    FOLDER_PATH = "output/"
 
     def backgroundRemove(image):
         """Remove background from an image using contour detection and masking.
@@ -539,7 +539,6 @@ def big(NAME):
 
         # print(f'Final threshold parameters: {threshlist}')
         print(f'Returning parameters - Block Size: {first}, C: {second}')
-        cv2.imshow("optimal params", image)
         return first,second,image
          
             
@@ -780,7 +779,7 @@ def big(NAME):
     img=resizeImg(img)
     originalImg = img.copy()
 
-    
+    cv2.imwrite(f"{FOLDER_PATH}0_normal_image.png", originalImg)
 
 
 
@@ -799,6 +798,7 @@ def big(NAME):
     img,midX,midY,radius=backgroundRemove(img)
     imgray=cv2.cvtColor(img,cv2.COLOR_BGR2GRAY)
     
+    cv2.imwrite(f"{FOLDER_PATH}1_gray_image.png", imgray)
 
 
 
@@ -829,8 +829,11 @@ def big(NAME):
     print('LOCATION: ',groundTruth['Location'])
     
 
-
-
+    clahe = cv2.createCLAHE(clipLimit=2, tileGridSize=(8,8))
+    LAB = cv2.cvtColor(img,cv2.COLOR_BGR2LAB)
+    LAB[:,:,0] = clahe.apply(LAB[:,:,0])
+    imgray = LAB[:,:,0]
+    cv2.imwrite(f"{FOLDER_PATH}clahe.png", imgray)
 
 
 
@@ -940,11 +943,10 @@ def big(NAME):
     kn = KneeLocator(np.arange(len(distances)), distances, curve='convex', direction='increasing')
     print('knee: ',kn.knee,distances[kn.knee]*1000)
     
-    
-
     df_copy=pd.DataFrame()
     singleIdx=-2
     imgcopy=img.copy()
+    cv2.imwrite(f"{FOLDER_PATH}2_prev_dbscan.png", imgcopy)
 
     # The DBSCAN is used to group the cells in the 
     # Petri dish into different clusters based on their spatial proximity.
@@ -966,7 +968,7 @@ def big(NAME):
     for name, group in groups:
         cv2.drawContours(imgcopy,group['Contours'].tolist(),-1,next(color),1)
         lst.append(group['Circularity'].mean()+len(group)/len(df_copy))           
-    
+    cv2.imwrite(f"{FOLDER_PATH}3_contours.png", imgcopy)
     
     # Determine the dominant cluster index based on circularity and cluster size.
     if lst.index(max(lst))-1==-1:
@@ -1008,6 +1010,7 @@ def big(NAME):
     # Draw contours of df_single on a copy of the input image for visualization.
     testImage=img.copy()
     cv2.drawContours(testImage,df_single['Contours'].tolist(),-1,(255,255,0),1)
+    cv2.imwrite(f"{FOLDER_PATH}4_contours_df_single.png", testImage)
 
     # Train a Gaussian Naive Bayes GNB classifier on the Color and Lightness features
     # Target: cluster column in the DataFrame
@@ -1068,8 +1071,15 @@ def big(NAME):
     print(f'Original colony count (before watershed): {len(df_copy[df_copy["cluster"] == singleIdx])}')
     print(f'New colonies detected (after watershed): {len(df_final)}')
 
-    # Change the background color of the image for better visualization.
+
+    cv2.imwrite(f"{FOLDER_PATH}6_prev_chan_background.png", img)
+
+    # Change the background color of the image for better visualization
     img=changeBackgroundColor(img)
+    
+    cv2.imwrite(f"{FOLDER_PATH}7_changed_background.png", img)
+    cv2.imwrite(f"{FOLDER_PATH}8_threshold.png", thresh)
+    
     
     # Display the total number of colonies on the image.
     #  (int(midX)-200,int(midY-radius-50))')
